@@ -2,12 +2,19 @@ from django.db import models
 from django.conf import settings
 from django.core.validators import RegexValidator
 from django.utils import timezone
-from datetime import timedelta
 
 
 
 
 class Customer(models.Model):
+    barcode = models.CharField(
+        max_length=4,
+        unique=True,
+        validators=[
+            RegexValidator(regex=r"^\d{4}$",
+                           message="Barcode must be exactly 4 digits.")
+        ],
+    )
     full_name = models.CharField(max_length=255)
     phone = models.CharField(max_length=15, unique=True, db_index=True)
     id_number = models.CharField(
