@@ -5,16 +5,15 @@ from django.db import models
 
 
 class CheckIn(models.Model):
+    customer = models.ForeignKey(
+        "customers.Customer", related_name='checkins', on_delete=models.PROTECT,
+        db_index=True)
+
     VISIT_TYPE_CHOICES = (
         ("walk_in", "Walk-in"),
         ("free_trial", "Free trial"),
         ("subscription", "Subscription")
     )
-    customer = models.ForeignKey(
-        "customers.Customer", related_name='checkins', on_delete=models.PROTECT,
-        db_index=True)
-    subscription = models.ForeignKey(
-        "customers.Subscription", null=True, blank=True,  on_delete=models.SET_NULL, related_name='checkins')
     visit_type = models.CharField(
         max_length=20, choices=VISIT_TYPE_CHOICES, db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)

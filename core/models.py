@@ -15,10 +15,6 @@ class User(AbstractUser):
     phone = models.CharField(max_length=15, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    class Meta:
-        db_table = 'users'
-        ordering = ['-date_joined']
-
     def __str__(self):
         return f"{self.username} - {self.get_role_display()}"
 
@@ -29,7 +25,7 @@ class User(AbstractUser):
     @property
     def is_receptionist(self):
         return self.role == 'receptionist'
-    
+
     @property
     def is_trainer(self):
         return self.role == 'trainer'

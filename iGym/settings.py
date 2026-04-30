@@ -39,9 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'checkins',
-    'customers',
-    'employees',
-    'users'
+    'customers'
 ]
 
 MIDDLEWARE = [
@@ -79,8 +77,11 @@ WSGI_APPLICATION = 'iGym.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'iGym_management',
+        'HOST':'localhost',
+        'USER':'root',
+        'PASSWORD':'8426'
     }
 }
 
@@ -103,19 +104,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'core.User'
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Cairo'
 
 USE_I18N = True
 
 USE_TZ = True
+
+AUTH_USER_MODEL = "core.User"
 
 
 # Static files (CSS, JavaScript, Images)

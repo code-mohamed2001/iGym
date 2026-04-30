@@ -1,9 +1,7 @@
-from django.db import models
 from django.conf import settings
 from django.core.validators import RegexValidator
+from django.db import models
 from django.utils import timezone
-
-
 
 
 class Customer(models.Model):
@@ -49,7 +47,6 @@ class Subscription(models.Model):
     KIND_CHOICES = (
         ("monthly", "Monthly (unlimited)"),
         ("session_pack", "Session pack"),
-        ("single visit", "One single visit")
     )
     SESSION_LIMIT_CHOICES = (
         (8, "8 sessions"),
@@ -76,6 +73,12 @@ class Subscription(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
     )
+
+    def __str__(self):
+        return f"{self.kind}"
+
+    class Meta:
+        ordering = ['-created_at']
 
     # def clean(self):
     #     if self.kind == "session_pack":
