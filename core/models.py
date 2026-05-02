@@ -16,7 +16,7 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.username} - {self.get_role_display()}"
+        return f"{self.first_name} {self.last_name} - {self.get_role_display()}"
 
     @property
     def is_owner(self):

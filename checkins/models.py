@@ -22,3 +22,5 @@ class CheckIn(models.Model):
         on_delete=models.PROTECT,
         related_name="created_customers",
     )
+
+    

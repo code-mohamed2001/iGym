@@ -47,6 +47,7 @@ class Subscription(models.Model):
     KIND_CHOICES = (
         ("monthly", "Monthly (unlimited)"),
         ("session_pack", "Session pack"),
+        ("single visit","Single visit")
     )
     SESSION_LIMIT_CHOICES = (
         (8, "8 sessions"),
