@@ -9,6 +9,12 @@ class CheckIn(models.Model):
         "customers.Customer", related_name='checkins', on_delete=models.PROTECT,
         db_index=True)
 
+    customer_barcode = models.CharField(
+        max_length=4,
+        db_index=True,
+        null=True
+    )
+
     VISIT_TYPE_CHOICES = (
         ("walk_in", "Walk-in"),
         ("free_trial", "Free trial"),
@@ -22,5 +28,3 @@ class CheckIn(models.Model):
         on_delete=models.PROTECT,
         related_name="created_customers",
     )
-
-    
