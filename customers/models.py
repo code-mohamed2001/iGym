@@ -47,12 +47,18 @@ class Subscription(models.Model):
     KIND_CHOICES = (
         ("monthly", "Monthly (unlimited)"),
         ("session_pack", "Session pack"),
-        ("single visit","Single visit")
+        ("single visit", "Single visit")
     )
     SESSION_LIMIT_CHOICES = (
         (8, "8 sessions"),
         (12, "12 sessions"),
         (16, "16 sessions"),
+    )
+
+    invoice_number = models.CharField(
+        max_length=30,
+        unique=True,
+        blank=True,
     )
     session_limit = models.PositiveSmallIntegerField(
         null=True,

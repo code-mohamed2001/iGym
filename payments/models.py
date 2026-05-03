@@ -47,6 +47,7 @@ class Invoice(models.Model):
         default='monthly'
     )
 
+
     # Financial Fields
     amount = models.DecimalField(
         max_digits=10,
