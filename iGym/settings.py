@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'core',
     'checkins',
     'customers',
@@ -80,12 +81,15 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'iGym_management',
-        'HOST':'localhost',
-        'USER':'root',
-        'PASSWORD':'8426'
+        'HOST': 'localhost',
+        'USER': 'root',
+        'PASSWORD': '8426'
     }
 }
 
+REST_FRAMEWORK = {
+    'COERCE_DECIMAL_TO_STRING': False
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
