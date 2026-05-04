@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from debug_toolbar.toolbar import debug_toolbar_urls
 
 admin.site.site_header = 'iGym Admin'
 
@@ -25,4 +26,4 @@ urlpatterns = [
     path('BrowseCustomers/', include('customers.urls')),
     path('BrowseCheckIns/', include('checkins.urls')),
     path('BrowsePayments/', include('payments.urls')),
-]
+] + debug_toolbar_urls()

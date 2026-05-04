@@ -5,6 +5,13 @@ from django.db import models
 
 
 class CheckIn(models.Model):
+
+    VISIT_TYPE_CHOICES = (
+        ("walk_in", "Walk-in"),
+        ("free_trial", "Free trial"),
+        ("subscription", "Subscription")
+    )
+
     customer = models.ForeignKey(
         "customers.Customer", related_name='checkins', on_delete=models.PROTECT,
         db_index=True)
@@ -13,12 +20,6 @@ class CheckIn(models.Model):
         max_length=4,
         db_index=True,
         null=True
-    )
-
-    VISIT_TYPE_CHOICES = (
-        ("walk_in", "Walk-in"),
-        ("free_trial", "Free trial"),
-        ("subscription", "Subscription")
     )
     visit_type = models.CharField(
         max_length=20, choices=VISIT_TYPE_CHOICES, db_index=True)

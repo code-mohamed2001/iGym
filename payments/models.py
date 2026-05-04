@@ -1,9 +1,17 @@
 # apps/payments/models.py
-from email.policy import default
+import random
+import string
+
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils import timezone
+
+
+def generate_invoice_number():
+    while True:
+        number = ''.join(random.choices(string.digits, k=6))
+        invoice_number = f"INV-{number}"
+        if not Invoice.objects.filter(invoice_number=invoice_number).exists():
+            return invoice_number
 
 
 class Invoice(models.Model):
@@ -31,6 +39,12 @@ class Invoice(models.Model):
         ("single visit", "Single visit")
     )
 
+    invoice_number = models.CharField(
+        max_length=10,
+        unique=True,
+        blank=True,  # so we can auto-fill it before saving
+        editable=False,
+    )
 
     # Relationships
     customer = models.ForeignKey(
@@ -46,7 +60,6 @@ class Invoice(models.Model):
         null=False,
         default='monthly'
     )
-
 
     # Financial Fields
     amount = models.DecimalField(
@@ -98,11 +111,12 @@ class Invoice(models.Model):
     def __str__(self):
         return f"{self.id} - {self.customer.full_name} - {self.status}"
 
-
     @property
     def is_paid(self):
         """Check if invoice is paid"""
         return self.status == 'paid'
 
-
-    
+    def save(self, *args, **kwargs):
+        if not self.invoice_number:  # only generate if not already set
+            self.invoice_number = generate_invoice_number()
+        super().save(*args, **kwargs)
