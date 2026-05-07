@@ -23,7 +23,7 @@ admin.site.site_header = 'iGym Admin'
 admin.site.index_title = "Admin Dashboard"
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('BrowseCustomers/', include('customers.urls')),
-    path('BrowseCheckIns/', include('checkins.urls')),
-    path('BrowsePayments/', include('payments.urls')),
+    path('BackEnd/BrowseCustomers/', include('customers.urls')),
+    path('BackEnd/BrowseCheckIns/', include('checkins.urls')),
+    path('BackEnd/BrowsePayments/', include('payments.urls')),
 ] + debug_toolbar_urls()

@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
 from .models import Customer,Subscription
-from .serializers import CustomerSerializer
+from .serializers import CustomerSerializer,CustomerDetailSerializer,SubscriptionSerializer
 
 
 
@@ -16,4 +16,14 @@ def customer_list(request):
 
 @api_view()
 def customer_datail(request, id):
-    return Response(id)
+    customer = get_object_or_404(Customer,barcode=id)
+    serializer = CustomerDetailSerializer(customer)
+    return Response(serializer.data)
+
+
+@api_view()
+def subscription_list(request):
+    subs = Subscription.objects.select_related('customer').all()
+    serializer = SubscriptionSerializer(subs,many=True)
+    return Response(serializer.data)
+

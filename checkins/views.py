@@ -9,7 +9,7 @@ from .serializers import CheckInSerializer
 # Create your views here.
 @api_view()
 def checkin_list(request):
-    checkin = CheckIn.objects.all()
+    checkin = CheckIn.objects.select_related('customer','created_by').all()
     serializer = CheckInSerializer(checkin, many=True)
     return Response(serializer.data)
 

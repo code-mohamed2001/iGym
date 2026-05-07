@@ -9,6 +9,7 @@ from .serializers import InvoiceSerializer
 # Create your views here.
 @api_view()
 def invoice_list(request):
-    invoice = Invoice.objects.all()
+    invoice = Invoice.objects.select_related(
+        'customer').select_related('created_by').all()
     serializer = InvoiceSerializer(invoice, many=True)
     return Response(serializer.data)
