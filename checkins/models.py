@@ -29,3 +29,23 @@ class CheckIn(models.Model):
         on_delete=models.PROTECT,
         related_name="created_customers",
     )
+
+    class Meta:
+        indexes = [
+            # Core lookup: all check-ins for a specific customer, newest first
+            # e.g. customer visit history page
+            models.Index(fields=["customer", "-created_at"],
+                         name="checkin_customer_date_idx"),
+
+            # Attendance reports filtered by date range across all customers
+            # e.g. "how many check-ins happened this week?"
+            models.Index(fields=["created_at"], name="checkin_created_at_idx"),
+
+            # Barcode scan at the door: resolve customer + check recency together
+            models.Index(
+                fields=["customer_barcode", "-created_at"], name="checkin_barcode_date_idx"),
+
+            # Filter check-ins by visit type, e.g. count all free trials this month
+            models.Index(fields=["visit_type", "created_at"],
+                         name="checkin_visit_type_date_idx"),
+        ]

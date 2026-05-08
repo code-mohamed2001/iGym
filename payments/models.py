@@ -54,13 +54,6 @@ class Invoice(models.Model):
         db_index=True
     )
 
-    subscription = models.CharField(
-        max_length=20,
-        choices=SUBSCRIBTION_KIND_CHOICES,
-        null=False,
-        default='monthly'
-    )
-
     # Financial Fields
     amount = models.DecimalField(
         max_digits=10,
@@ -68,6 +61,20 @@ class Invoice(models.Model):
         help_text="Invoice amount in EGP"
     )
 
+    amount_after_discount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        help_text="Invoice amount after discount in EGP",
+        null=True,
+        blank=True,
+    )
+
+    subscription = models.CharField(
+        max_length=20,
+        choices=SUBSCRIBTION_KIND_CHOICES,
+        null=False,
+        default='monthly'
+    )
     # Payment Tracking
     payment_type = models.CharField(
         max_length=20,

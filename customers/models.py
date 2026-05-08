@@ -35,6 +35,17 @@ class Customer(models.Model):
 
     def __str__(self):
         return f"{self.full_name}"
+    
+    class Meta:
+        indexes = [
+            # Full-name lookups and alphabetical listings
+            models.Index(fields=["full_name"], name="customer_full_name_idx"),
+            # Filtering/sorting customers by creation time
+            models.Index(fields=["created_at"],
+                         name="customer_created_at_idx"),
+            models.Index(fields=["phone"],
+                         name="customer_phone_idx"),
+        ]
 
 
 class Subscription(models.Model):
@@ -86,34 +97,23 @@ class Subscription(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+        indexes = [
+            # Most common query: a customer's subscriptions filtered by status
+            # e.g. fetch all active subscriptions for a given customer
+            models.Index(fields=["customer", "status"],
+                         name="sub_customer_status_idx"),
 
-    # def clean(self):
-    #     if self.kind == "session_pack":
-    #         if self.session_limit not in (8, 12, 16):
-    #             raise ValidationError(
-    #                 {"session_limit": "Session pack limit must be 8, 12, or 16."})
-    #         # enforce “30 days from start”
-    #         expected_end = self.start_date + timedelta(days=30)
-    #         if self.end_date != expected_end:
-    #             raise ValidationError(
-    #                 {"end_date": "For session packs, end_date must equal start_date + 30 days."})
-    #     else:
-    #         # monthly: ensure session fields not used
-    #         if self.session_limit is not None:
-    #             raise ValidationError(
-    #                 {"session_limit": "Monthly subscription must not have a session_limit."})
+            # Expiry jobs: find active subs whose end_date has passed
+            # e.g. Subscription.objects.filter(status="active", end_date__lte=today)
+            models.Index(fields=["status", "end_date"],
+                         name="sub_status_end_date_idx"),
 
-    @property
-    def remaining_sessions(self):
-        if self.kind != "session_pack":
-            return None
-        return max(0, (self.session_limit or 0) - self.sessions_used)
+            # Dashboard / admin listings ordered by creation time
+            models.Index(fields=["created_at"], name="sub_created_at_idx"),
 
-    @property
-    def is_currently_active(self):
-        today = timezone.localdate()
-        date_ok = self.start_date <= today <= self.end_date
-        status_ok = self.status == "active"
-        if self.kind == "monthly":
-            return status_ok and date_ok
-        return status_ok and date_ok and (self.sessions_used < (self.session_limit or 0))
+            # Filtering subscriptions by kind (e.g. all session_pack subs)
+            models.Index(fields=["kind"], name="sub_kind_idx"),
+        ]
+
+
+
