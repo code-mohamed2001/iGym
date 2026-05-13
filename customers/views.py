@@ -1,6 +1,4 @@
-from django.shortcuts import get_object_or_404
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
 
 from .models import Customer, Subscription
 from .serializers import (
@@ -10,23 +8,21 @@ from .serializers import (
 )
 
 
-# Create your views here.
-@api_view()
-def customer_list(request):
-    customer = Customer.objects.select_related('created_by').all()
-    serializer = CustomerSerializer(customer, many=True)
-    return Response(serializer.data)
+class CustomerViewSet(ModelViewSet):
+    queryset = Customer.objects.select_related('created_by').all()
+    serializer_class = CustomerSerializer
+    lookup_field = "barcode"
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return CustomerDetailSerializer
+        return super().get_serializer_class()
 
 
-@api_view()
-def customer_datail(request, id):
-    customer = get_object_or_404(Customer, barcode=id)
-    serializer = CustomerDetailSerializer(customer)
-    return Response(serializer.data)
+class SubscriptionViewSet(ModelViewSet):
+    queryset = Subscription.objects.select_related(
+        'created_by','customer').all()
+    serializer_class = SubscriptionSerializer
 
-
-@api_view()
-def subscription_list(request):
-    subs = Subscription.objects.select_related('customer').select_related('created_by').all()
-    serializer = SubscriptionSerializer(subs, many=True)
-    return Response(serializer.data)
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)

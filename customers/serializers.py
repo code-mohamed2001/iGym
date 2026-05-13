@@ -7,7 +7,7 @@ from .models import Customer, Subscription
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
-        fields = ['barcode', 'full_name', 'phone']
+        fields = ['barcode', 'full_name', 'phone', 'id_number']
 
 
 class CustomerDetailSerializer(serializers.ModelSerializer):
@@ -17,10 +17,16 @@ class CustomerDetailSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    customer = serializers.StringRelatedField()
-    created_by = serializers.StringRelatedField()
+    customer = serializers.PrimaryKeyRelatedField(
+        queryset=Customer.objects.all())
+    customer_display = serializers.StringRelatedField(
+        source="customer", read_only=True)  # read: __str__
+
+    created_by = serializers.StringRelatedField(read_only=True)
     status = serializers.SerializerMethodField(
         method_name='check_subscription_status')
+    
+    
 
     def check_subscription_status(self, obj):
         if obj.end_date < timezone.now().date():
@@ -35,5 +41,5 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Subscription
-        fields = ['customer', 'kind', 'start_date', 'end_date', 'status', 'session_limit', 'sessions_used',
-                  'created_at', 'created_by']
+        fields = ['customer', "customer_display", 'kind', "price", 'start_date', 'end_date', 'status', 'session_limit', 'sessions_used',
+                  'created_at', 'created_by','invoice_number']

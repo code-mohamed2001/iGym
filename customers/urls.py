@@ -1,10 +1,9 @@
-from django.urls import path
+from rest_framework.routers import SimpleRouter
 
 from . import views
 
+router = SimpleRouter()
+router.register('customers', views.CustomerViewSet, basename='customers')
+router.register('subscriptions', views.SubscriptionViewSet, basename='subscriptions')
 # URLConf
-urlpatterns = [
-    path('', views.customer_list),
-    path('subs/', views.subscription_list),
-    path('<str:id>/', views.customer_datail),
-]
+urlpatterns = router.urls

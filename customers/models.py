@@ -71,6 +71,7 @@ class Subscription(models.Model):
         unique=True,
         blank=True,
     )
+
     session_limit = models.PositiveSmallIntegerField(
         null=True,
         blank=True,

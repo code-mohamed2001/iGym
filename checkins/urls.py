@@ -1,8 +1,8 @@
-from django.urls import path
+from rest_framework.routers import SimpleRouter
+
 from . import views
 
-# URLConf
-urlpatterns = [
-    path('', views.checkin_list),
+router = SimpleRouter()
+router.register("", views.CheckInViewSet, basename="checkins")
 
-]
+urlpatterns = router.urls
