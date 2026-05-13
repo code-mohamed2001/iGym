@@ -23,6 +23,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         source="customer", read_only=True)  # read: __str__
 
     created_by = serializers.StringRelatedField(read_only=True)
+    invoice_number = serializers.CharField(read_only=True)
     status = serializers.SerializerMethodField(
         method_name='check_subscription_status')
     

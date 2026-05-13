@@ -1,18 +1,12 @@
 # apps/payments/models.py
-import random
-import string
-
 from django.conf import settings
 from django.db import models
 
 
 def generate_invoice_number():
-    from payments.models import Invoice
-    while True:
-        number = ''.join(random.choices(string.digits, k=6))
-        invoice_number = f"INV-{number}"
-        if not Invoice.objects.filter(invoice_number=invoice_number).exists():
-            return invoice_number
+    from core.utilities import generate_unique_invoice_number
+
+    return generate_unique_invoice_number()
 
 class Invoice(models.Model):
     # Payment Status Choices
