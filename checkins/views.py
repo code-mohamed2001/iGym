@@ -44,19 +44,24 @@ class CheckInViewSet(ModelViewSet):
             )
 
             if latest_sub.kind == "session_pack":
-                # consume one session per successful check-in
-                if latest_sub.session_limit is not None and latest_sub.sessions_used + 1 > latest_sub.session_limit:
+                if (
+                    latest_sub.session_limit is not None
+                    and latest_sub.sessions_used + 1 > latest_sub.session_limit
+                ):
                     raise ValidationError(
-                        {"detail": "No sessions remaining in this pack."})
-            
+                        {"detail": "No sessions remaining in this pack."}
+                    )
+
             if is_expired:
                 raise ValidationError({"detail": "Subscription is expired."})
-
-                Subscription.objects.filter(pk=latest_sub.pk).update(
-                    sessions_used=F("sessions_used") + 1)
 
             serializer.save(
                 created_by=self.request.user,
                 customer=customer,
                 customer_barcode=customer_barcode,
             )
+
+            if latest_sub.kind == "session_pack":
+                Subscription.objects.filter(pk=latest_sub.pk).update(
+                    sessions_used=F("sessions_used") + 1
+                )
