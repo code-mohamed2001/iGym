@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from core import invoice_constants
 from core.service import create_subscription_with_invoice
 
 from .models import Customer, Subscription
@@ -86,10 +87,17 @@ class SubscriptionViewSet(ModelViewSet):
             end_date=data["end_date"],
             session_limit=data.get("session_limit"),
             sessions_used=data.get("sessions_used", 0),
+            invoice_status=data.get(
+                "invoice_status", invoice_constants.DEFAULT_INVOICE_STATUS
+            ),
+            amount_after_discount=data.get("amount_after_discount"),
+            payment_type=data.get(
+                "payment_type", invoice_constants.DEFAULT_PAYMENT_TYPE
+            ),
+            payment_reference=data.get("payment_reference", ""),
         )
         output = self.get_serializer(subscription)
         headers = self.get_success_headers(output.data)
         return Response(
             output.data, status=status.HTTP_201_CREATED, headers=headers
         )
-

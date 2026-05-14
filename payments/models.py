@@ -2,6 +2,8 @@
 from django.conf import settings
 from django.db import models
 
+from core import invoice_constants
+
 
 def generate_invoice_number():
     from core.utilities import generate_unique_invoice_number
@@ -9,23 +11,8 @@ def generate_invoice_number():
     return generate_unique_invoice_number()
 
 class Invoice(models.Model):
-    # Payment Status Choices
-    STATUS_CHOICES = (
-        ('paid', 'Paid'),
-        ('unpaid', 'Unpaid'),
-        ('waiting_approval', 'Waiting for Approval'),
-        ('cancelled', 'Cancelled'),
-        ('refunded', 'Refunded'),
-    )
-
-    # Payment Type Choices
-    PAYMENT_TYPE_CHOICES = (
-        ('cash', 'Cash'),
-        ('vodafone_cash', 'Vodafone Cash'),
-        ('instapay', 'Instapay'),
-        ('bank_transfer', 'Bank Transfer'),  # Added for future
-        ('credit_card', 'Credit Card'),       # Added for future
-    )
+    STATUS_CHOICES = invoice_constants.INVOICE_STATUS_CHOICES
+    PAYMENT_TYPE_CHOICES = invoice_constants.PAYMENT_TYPE_CHOICES
 
     SUBSCRIBTION_KIND_CHOICES = (
         ("monthly", "Monthly (unlimited)"),
@@ -73,13 +60,13 @@ class Invoice(models.Model):
     payment_type = models.CharField(
         max_length=20,
         choices=PAYMENT_TYPE_CHOICES,
-        default='cash'
+        default=invoice_constants.DEFAULT_PAYMENT_TYPE,
     )
 
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default='unpaid',
+        default=invoice_constants.DEFAULT_INVOICE_STATUS,
         db_index=True
     )
 
