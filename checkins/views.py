@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.pagination import PageNumberPagination
 
 from customers.models import Customer, Subscription
 
@@ -14,6 +15,8 @@ from .serializers import CheckInSerializer
 class CheckInViewSet(ModelViewSet):
     queryset = CheckIn.objects.select_related("customer", "created_by").all()
     serializer_class = CheckInSerializer
+    pagination_class = PageNumberPagination
+
 
     def perform_create(self, serializer):
         customer_barcode = serializer.validated_data.get("customer_barcode")

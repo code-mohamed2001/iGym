@@ -1,11 +1,15 @@
 from django.db.models.deletion import ProtectedError
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from rest_framework.pagination import PageNumberPagination
 from core import invoice_constants
 from core.service import create_subscription_with_invoice
 
+from .filters import SubscriptionFilter
 from .models import Customer, Subscription
 from .serializers import (
     CustomerDetailSerializer,
@@ -18,6 +22,9 @@ class CustomerViewSet(ModelViewSet):
     queryset = Customer.objects.select_related('created_by').all()
     serializer_class = CustomerSerializer
     lookup_field = "barcode"
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields = ['barcode', 'full_name', 'phone']
+    pagination_class=PageNumberPagination
 
     def get_serializer_class(self):
         if self.action == "retrieve":
@@ -73,6 +80,9 @@ class SubscriptionViewSet(ModelViewSet):
     queryset = Subscription.objects.select_related(
         'created_by', 'customer').all()
     serializer_class = SubscriptionSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter]
+    filterset_class = SubscriptionFilter
+    search_fields = ['customer__full_name']
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
