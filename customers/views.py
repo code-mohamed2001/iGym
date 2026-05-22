@@ -7,7 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from rest_framework.pagination import PageNumberPagination
 from core import invoice_constants
-from core.service import create_subscription_with_invoice
+from core.services.create_subscription_with_invoice import create_subscription_with_invoice
 
 from .filters import SubscriptionFilter
 from .models import Customer, Subscription
