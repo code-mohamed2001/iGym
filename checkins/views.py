@@ -16,9 +16,10 @@ class CheckInViewSet(ModelViewSet):
     serializer_class = CheckInSerializer
     pagination_class = PageNumberPagination
     filter_backends = [DjangoFilterBackend, SearchFilter]
+    search_fields=['customer_barcode']
     filterset_fields = {
         'visit_type': ['exact'],
-        'created_at': ['date', 'gte', 'lte'],
+        'created_at': ['date'],
     }
 
     def get_queryset(self):

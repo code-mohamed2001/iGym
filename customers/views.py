@@ -83,7 +83,7 @@ class SubscriptionViewSet(ModelViewSet):
     lookup_field = 'customer__barcode'
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = SubscriptionFilter
-    search_fields = ['customer__full_name']
+    search_fields = ['customer__full_name','customer__phone']
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
