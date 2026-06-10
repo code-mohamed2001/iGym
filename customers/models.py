@@ -96,6 +96,26 @@ class Subscription(models.Model):
     def __str__(self):
         return f"{self.kind}"
 
+    def is_active(self) -> bool:
+        today = timezone.now().date()
+
+        if self.kind == "monthly":
+            return self.end_date >= today
+
+        if self.kind == "session_pack":
+            return self.end_date >= today and self.sessions_remaining() > 0
+
+    def sessions_remaining(self) -> int | None:
+        """Returns remaining sessions for session packs, None for unlimited plans"""
+        if self.kind == "session_pack" and self.session_limit is not None:
+            return max(0, self.session_limit - self.sessions_used)
+        return None  # monthly and single_visit have no session limit
+
+    def has_sessions_available(self) -> bool:
+        if self.kind == "session_pack":
+            return self.sessions_remaining() > 0
+        return True
+
     class Meta:
         ordering = ['-created_at']
         indexes = [

@@ -7,7 +7,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from rest_framework.pagination import PageNumberPagination
 from core import invoice_constants
-from core.services.create_subscription_with_invoice import create_subscription_with_invoice
+from customers.services import SubscriptionService
 
 from .filters import SubscriptionFilter
 from .models import Customer, Subscription
@@ -88,7 +88,8 @@ class SubscriptionViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-        subscription = create_subscription_with_invoice(
+
+        subscription = SubscriptionService.create_with_invoice(
             created_by=request.user,
             customer=data["customer"],
             kind=data["kind"],
@@ -98,16 +99,13 @@ class SubscriptionViewSet(ModelViewSet):
             session_limit=data.get("session_limit"),
             sessions_used=data.get("sessions_used", 0),
             invoice_status=data.get(
-                "invoice_status", invoice_constants.DEFAULT_INVOICE_STATUS
-            ),
+                "invoice_status", invoice_constants.DEFAULT_INVOICE_STATUS),
             amount_after_discount=data.get("amount_after_discount"),
             payment_type=data.get(
-                "payment_type", invoice_constants.DEFAULT_PAYMENT_TYPE
-            ),
+                "payment_type", invoice_constants.DEFAULT_PAYMENT_TYPE),
             payment_reference=data.get("payment_reference", ""),
         )
+
         output = self.get_serializer(subscription)
         headers = self.get_success_headers(output.data)
-        return Response(
-            output.data, status=status.HTTP_201_CREATED, headers=headers
-        )
+        return Response(output.data, status=status.HTTP_201_CREATED, headers=headers)
