@@ -1,7 +1,7 @@
 # checkins/services.py
-from dataclasses import dataclass
 from django.db import transaction
 from django.core.exceptions import ValidationError
+from dataclasses import dataclass
 from customers.models import Customer, Subscription
 
 

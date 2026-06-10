@@ -1,8 +1,6 @@
 from django.utils import timezone
 from rest_framework import serializers
-
 from core import invoice_constants
-
 from .models import Customer, Subscription
 
 
