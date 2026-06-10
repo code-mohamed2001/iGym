@@ -37,13 +37,6 @@ class CheckInSerializer(serializers.ModelSerializer):
     )
 
     
-    
-
-    def get_subscription_kind(self, obj):
-        return getattr(obj, '_subscription_ kind', None)
-
-    def get_sessions_remaining(self, obj):
-        return getattr(obj, '_sessions_remaining', None)
 
     class Meta:
         model = CheckIn

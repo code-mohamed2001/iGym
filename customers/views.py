@@ -79,7 +79,8 @@ class CustomerViewSet(ModelViewSet):
 class SubscriptionViewSet(ModelViewSet):
     queryset = Subscription.objects.select_related(
         'created_by', 'customer').all()
-    serializer_class = SubscriptionSerializer
+    serializer_class = SubscriptionSerializer   
+    lookup_field = 'customer__barcode'
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = SubscriptionFilter
     search_fields = ['customer__full_name']
