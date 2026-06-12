@@ -16,7 +16,7 @@ class CheckInViewSet(ModelViewSet):
     serializer_class = CheckInSerializer
     pagination_class = PageNumberPagination
     filter_backends = [DjangoFilterBackend, SearchFilter]
-    search_fields=['customer_barcode']
+    search_fields=['customer__barcode']
     filterset_fields = {
         'visit_type': ['exact'],
         'created_at': ['date'],

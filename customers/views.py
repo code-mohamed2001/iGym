@@ -2,11 +2,13 @@ from django.db.models.deletion import ProtectedError
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.filters import SearchFilter
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.pagination import PageNumberPagination
+
 from core import invoice_constants
 from customers.services import SubscriptionService
+
 from .filters import SubscriptionFilter
 from .models import Customer, Subscription
 from .serializers import (
@@ -22,7 +24,7 @@ class CustomerViewSet(ModelViewSet):
     lookup_field = "barcode"
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['barcode', 'full_name', 'phone']
-    pagination_class=PageNumberPagination
+    pagination_class = PageNumberPagination
 
     def get_serializer_class(self):
         if self.action == "retrieve":
@@ -77,11 +79,11 @@ class CustomerViewSet(ModelViewSet):
 class SubscriptionViewSet(ModelViewSet):
     queryset = Subscription.objects.select_related(
         'created_by', 'customer').all()
-    serializer_class = SubscriptionSerializer   
+    serializer_class = SubscriptionSerializer
     lookup_field = 'customer__barcode'
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = SubscriptionFilter
-    search_fields = ['customer__full_name','customer__phone']
+    search_fields = ['customer__full_name', 'customer__phone']
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
