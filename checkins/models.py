@@ -11,6 +11,7 @@ class CheckIn(models.Model):
         ("subscription", "Subscription")
     )
 
+    
     customer = models.ForeignKey(
         "customers.Customer",
         related_name='checkins',

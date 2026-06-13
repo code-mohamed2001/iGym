@@ -1,4 +1,5 @@
 # checkins/views.py
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
@@ -6,10 +7,10 @@ from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-
 from .models import CheckIn
 from .serializers import CheckInSerializer
 from .services import CheckInService
+from .filters import CheckInFilter                  
 
 
 class CheckInViewSet(ModelViewSet):
@@ -17,10 +18,7 @@ class CheckInViewSet(ModelViewSet):
     pagination_class = PageNumberPagination
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields=['customer__barcode']
-    filterset_fields = {
-        'visit_type': ['exact'],
-        'created_at': ['date'],
-    }
+    filterset_class = CheckInFilter
 
     def get_queryset(self):
         return CheckIn.objects.select_related(
@@ -29,6 +27,8 @@ class CheckInViewSet(ModelViewSet):
         ).prefetch_related(
             'customer__subscriptions'  # ✅ prefetch to avoid N+1 on list
         ).all().order_by('-created_at')
+
+        
 
     def create(self, request, *args, **kwargs):
         # 1. validate input shape only
