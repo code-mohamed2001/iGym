@@ -1,34 +1,52 @@
 # checkins/views.py
-from django.utils import timezone
+import datetime
+
+import pytz
 from django.core.exceptions import ValidationError
+from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+
+from .filters import CheckInFilter
 from .models import CheckIn
 from .serializers import CheckInSerializer
 from .services import CheckInService
-from .filters import CheckInFilter                  
 
 
 class CheckInViewSet(ModelViewSet):
     serializer_class = CheckInSerializer
     pagination_class = PageNumberPagination
     filter_backends = [DjangoFilterBackend, SearchFilter]
-    search_fields=['customer__barcode']
+    search_fields = ['customer__barcode']
     filterset_class = CheckInFilter
 
     def get_queryset(self):
-        return CheckIn.objects.select_related(
+
+        cairo = pytz.timezone('Africa/Cairo')
+        today = timezone.localdate()
+        start = cairo.localize(
+            datetime.datetime.combine(today, datetime.time.min))
+        end = cairo.localize(
+            datetime.datetime.combine(today, datetime.time.max))
+        start_utc = start.astimezone(pytz.utc)
+        end_utc = end.astimezone(pytz.utc)
+
+        queryset = CheckIn.objects.select_related(
             'customer',
             'created_by'
         ).prefetch_related(
-            'customer__subscriptions'  # ✅ prefetch to avoid N+1 on list
-        ).all().order_by('-created_at')
+            'customer__subscriptions'
+        ).order_by('-created_at')
 
-        
+        # default to today if no date filter provided
+        if 'date' not in self.request.query_params:
+            queryset = queryset.filter(created_at__range=(start_utc, end_utc))
+
+        return queryset
 
     def create(self, request, *args, **kwargs):
         # 1. validate input shape only
