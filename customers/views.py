@@ -3,6 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status
 from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -14,7 +15,8 @@ from .models import Customer, Subscription
 from .serializers import (
     CustomerDetailSerializer,
     CustomerSerializer,
-    SubscriptionSerializer,
+    SubscriptionWriteSerializer,
+    SubscriptionReadSerializer
 )
 
 
@@ -25,6 +27,7 @@ class CustomerViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['barcode', 'full_name', 'phone']
     pagination_class = PageNumberPagination
+    permission_classes = [IsAuthenticated, DjangoModelPermissions]
 
     def get_serializer_class(self):
         if self.action == "retrieve":
@@ -79,11 +82,16 @@ class CustomerViewSet(ModelViewSet):
 class SubscriptionViewSet(ModelViewSet):
     queryset = Subscription.objects.select_related(
         'created_by', 'customer').all()
-    serializer_class = SubscriptionSerializer
     lookup_field = 'customer__barcode'
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = SubscriptionFilter
     search_fields = ['customer__full_name', 'customer__phone']
+    permission_classes = [IsAuthenticated, DjangoModelPermissions]
+
+    def get_serializer_class(self):
+        if self.action in ['create', 'update', 'partial_update']:
+            return SubscriptionWriteSerializer  # write → validates FK
+        return SubscriptionReadSerializer       # read → no FK query
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

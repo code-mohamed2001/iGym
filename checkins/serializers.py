@@ -1,5 +1,6 @@
 # checkins/serializers.py
 from rest_framework import serializers
+
 from .models import CheckIn
 
 
@@ -35,17 +36,17 @@ class CheckInSerializer(serializers.ModelSerializer):
         source="customer.full_name",
         read_only=True
     )
-
-    
+    lookup_field = ['id']
 
     class Meta:
         model = CheckIn
         fields = [
+            'id',
             "barcode",          # write only
             "customer_barcode",
             "visit_type",
             "customer_name",     # read only
-      # read only
+            # read only
             "created_at",        # read only
         ]
         read_only_fields = ["created_at"]

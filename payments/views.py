@@ -1,4 +1,5 @@
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Invoice
@@ -10,3 +11,4 @@ class InvoiceViewSet(ModelViewSet):
     serializer_class = InvoiceSerializer
     lookup_field = "invoice_number"
     pagination_class = PageNumberPagination
+    permission_classes = [IsAuthenticated, DjangoModelPermissions]

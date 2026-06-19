@@ -10,7 +10,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-
+from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from .filters import CheckInFilter
 from .models import CheckIn
 from .serializers import CheckInSerializer
@@ -23,6 +23,7 @@ class CheckInViewSet(ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     search_fields = ['customer__barcode']
     filterset_class = CheckInFilter
+    permission_classes=[IsAuthenticated,DjangoModelPermissions]
 
     def get_queryset(self):
 

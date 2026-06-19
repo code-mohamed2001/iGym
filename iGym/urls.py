@@ -26,4 +26,32 @@ urlpatterns = [
     path('BackEnd/BrowseCustomers/', include('customers.urls')),
     path('BackEnd/BrowseCheckIns/', include('checkins.urls')),
     path('BackEnd/BrowsePayments/', include('payments.urls')),
+    path('BackEnd/auth/', include('djoser.urls')),
+    path('BackEnd/auth/', include('djoser.urls.jwt')),
 ] + debug_toolbar_urls()
+
+
+# /users/ sign up
+
+# /users/me/
+
+# /users/resend_activation/
+
+# /users/set_password/
+
+# /users/reset_password/
+
+# /users/reset_password_confirm/
+
+# /users/set_username/
+
+# /users/reset_username/
+
+# /users/reset_username_confirm/
+
+
+# /jwt/create / (JSON Web Token Authentication) login
+
+# /jwt/refresh / (JSON Web Token Authentication)
+
+# /jwt/verify / (JSON Web Token Authentication)
